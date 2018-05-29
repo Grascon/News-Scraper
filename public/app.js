@@ -1,10 +1,25 @@
-// Grab the articles as a json
-$.getJSON("/articles", function(data) {
-  // For each one
-  for (var i = 0; i < data.length; i++) {
-    // Display the apropos information on the page
-    $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
-  }
+$('#home').on('click', function(){
+  location.reload();
+});
+$("#wrapper").hide();
+$("#saved").hide();
+$(".col-md-6").hide();
+
+
+$("#scraper").on("click", function(){
+  console.log("Scrape");
+  $(".jumbotron").hide();
+  $("#saved").show();
+  $("#wrapper").show();
+  $(".col-md-6").show();
+  // Grab the articles as a json
+  $.getJSON("/articles", function(data) {
+    // For each one
+    for (var i = 0; i < data.length; i++) {
+      // Display the apropos information on the page
+      $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
+    }
+  });
 });
 
 
@@ -30,7 +45,8 @@ $(document).on("click", "p", function() {
       // A textarea to add a new note body
       $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
       // A button to submit a new note, with the id of the article saved to it
-      $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
+      $("#notes").append("<button class='btn btn-primary' data-id='" + data._id + "' id='savenote'>Save Note</button>");
+      $("#notes").append("<button class='btn btn-primary' data-id='" + data._id + "' id='savenote'>Save Article</button>");
 
       // If there's a note in the article
       if (data.note) {
@@ -70,3 +86,8 @@ $(document).on("click", "#savenote", function() {
   $("#titleinput").val("");
   $("#bodyinput").val("");
 });
+
+//When you click save article.
+/*
+
+*/
