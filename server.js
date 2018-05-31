@@ -28,12 +28,12 @@ app.use(express.static("public"));
 
 // Connect to the Mongo DB
 // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
-/*var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
 mongoose.Promise = Promise;
-mongoose.connect(MONGODB_URI);*/
+mongoose.connect(MONGODB_URI);
 
 mongoose.connect("mongodb://localhost/week18Populater");
 
@@ -133,7 +133,62 @@ app.post("/articles/:id", function(req, res) {
   });
 
 //add routes to saved article
+// Route for getting all SAved Articles from the db
+app.get("/saved-articles", function(req, res) {
+  // TODO: Finish the route so it grabs all of the articles
+  db.SavedArticle.find({}, function(error, found) {
+    // Log any errors if the server encounters one
+    if (error) {
+      console.log(error);
+    }
+    // Otherwise, send the result of this query to the browser
+    else {
+      res.json(found);
+    }
+  });
+});
+// Route for grabbing a specific Article by id, populate it with it's note
+app.get("/saved-articles/:id", function(req, res) {
+  // TODO
+  // ====
+  // Finish the route so it finds one article using the req.params.id,
+  // and run the populate method with "note",
+  // then responds with the article with the note included
+  db.SavedArticle.findById(req.params.id)
+    .populate("note")
+    .then(function(dbSavedArticle){
+      res.json(dbSavedArticle);
+    })
+    .catch(function(err) {
+      // If an error occurs, send it back to the client
+      res.json(err);
+    });
+});
 
+// Route for saving/updating an Article's associated Note
+app.post("/saved-articles/:id", function(req, res) {
+  // TODO
+  // ====
+  // save the new note that gets posted to the Notes collection
+  // then find an article from the req.params.id
+  // and update it's "note" property with the _id of the new note
+  db.Note.create(req.body)
+  .then(function(dbNote) {
+    // If a Note was created successfully, find one User (there's only one) and push the new Note's _id to the User's `notes` array
+    // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
+    // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
+    return db.SavedArticle.findOneAndUpdate({_id: req.params.id}, { note: dbNote._id }, { new: true });
+  })
+  .then(function(dbSavedArticle) {
+    // If the User was updated successfully, send it back to the client
+    res.json(dbSavedArticle);
+  })
+  .catch(function(err) {
+    // If an error occurs, send it back to the client
+    res.json(err);
+  });
+
+});
 });
 
 // Start the server
