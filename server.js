@@ -29,7 +29,7 @@ app.use(express.static("public"));
 // Connect to the Mongo DB
 // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
 
-var databaseUri = "mongodb://localhost/mongoHeadlines";
+var databaseUri = "mongodb://localhost/week18day3mongoose";
 
 if (process.env.MONGODB_URI){
   mongoose.connect(process.env.MONGODB_URI);
